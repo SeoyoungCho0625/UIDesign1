@@ -26,61 +26,124 @@
       border: 2px solid #aaa;
     }
 
-    /* 세로 직사각형 */
-    .vertical-rect {
+
+
+ /* 컵라면 */
+    .vertical-rect5 {
       position: absolute;
-      bottom: 0;
-      left: 50%;
+      bottom: 5px;
+      left: 70%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 200px;
+      background: #e74c3c;
+    }
+
+     /* 컵라면 */
+    .vertical-rect5-1 {
+      position: absolute;
+      bottom: 200px;
+      left: 70%;
       transform: translateX(-50%);
       width: 150px;
-      height: 300px;
-      background: #ffd94d;
+      height: 40px;
+      background: #000000;
     }
 
-    /* 사다리꼴 1 */
-    .trapezoid1 {
+/* 컵 */
+    .vertical-rect4 {
       position: absolute;
-      bottom: 300px;
+      bottom: 5px;
       left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 75px solid transparent;
-      border-right: 75px solid transparent;
-      border-bottom: 50px solid #e74c3c;
+      width: 100px;
+      height: 130px;
+      background: #868e96;
     }
 
-    /* 사다리꼴 2 */
-    .trapezoid2 {
+     /* 컵 */
+    .vertical-rect4-1 {
       position: absolute;
-      bottom: 350px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 50px solid transparent;
-      border-right: 50px solid transparent;
-      border-bottom: 40px solid #f39c12;
+      width: 140px;
+      height: 40px;
+      background: #ced4da;
     }
 
     /* 위에 얹어진 얇은 가로 직사각형 */
     .top-bar {
       position: absolute;
-      bottom: 390px;
-      left: 50%;
+      bottom: 240px;
+      left: 70%;
       transform: translateX(-50%);
       width: 250px;
       height: 20px;
-      background: #2ecc71;
+      background: #d3c7b5;
     }
+
+        /* 세로 직사각형 */
+    .vertical-rect {
+      position: absolute;
+      bottom: 5px;
+      left: 20%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 240px;
+      background: #ffd94d;
+    }
+
+
+ /* 마리오 다리 */
+    .vertical-rect2-1 {
+      position: absolute;
+      bottom: 5px;
+      left: 10%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: #ffffcc;
+    }
+
+ /* 마리오 다리 */
+    .vertical-rect2-2 {
+      position: absolute;
+      bottom: 5px;
+      left: 30%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: #ffffcc;
+    }
+
+ /* 마리오 머리 */
+    .vertical-rect3 {
+      position: absolute;
+      bottom: 150px;
+      left: 20%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 150px;
+      background: #ffffcc;
+    }
+
+
+    
   </style>
 </head>
 <body>
 
   <div class="stage">
+    <div class="vertical-rect5"></div>
+    <div class="vertical-rect5-1"></div>
+    <div class="vertical-rect4"></div>
+    <div class="vertical-rect4-1"></div>
     <div class="vertical-rect"></div>
-    <div class="trapezoid1"></div>
-    <div class="trapezoid2"></div>
+    <div class="vertical-rect2-1"></div>
+    <div class="vertical-rect2-2"></div>
+    <div class="vertical-rect3"></div>
+
     <div class="top-bar"></div>
   </div>
 
