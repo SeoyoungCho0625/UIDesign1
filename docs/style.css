@@ -12,11 +12,26 @@ body {
     font-family: monospace;
 }
 
+p, h1, h2, ul, li {
+  text-align: left;
+  padding-left: 0px;
+}
+
+ul {
+  list-style-position: inside;
+  padding-left: 0px; /* 필요하면 유지하거나 조정 */
+}
+
+li {
+  margin-left: 0;
+  padding-left: 0;
+  text-align: left;
+}
 
 span {
     font-size: 60px;
     font-family: monospace;
-    
+
 }
 
 .letter{
