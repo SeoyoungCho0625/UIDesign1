@@ -51,6 +51,7 @@ span {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  font-family: monospace;
   margin: 12px 0;
   transition: background-color 0.3s ease;
 }
@@ -70,4 +71,4 @@ body.dark-mode a {
   color: #90caf9;
 }
 
-/* 필요하면 다른 요소들도 dark-mode 안에 정의 */
+
