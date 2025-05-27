@@ -4,6 +4,9 @@ img {
 }
 
 body {
+    text-align: left;
+    padding-left: 30px;
+    padding-top: 30px;
     background: lightyellow;
     color: darkslateblue;
     font-family: monospace;
@@ -12,7 +15,8 @@ body {
 
 span {
     font-size: 60px;
-    font-family: serif;
+    font-family: monospace;
+    
 }
 
 .letter{
@@ -22,3 +26,33 @@ span {
 #drop-cap{
     color: darkpurple;
 }
+
+/* 버튼 기본 스타일 */
+.toggle-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 12px 0;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #555;
+}
+
+/* 다크모드용 전체 배경과 텍스트 변경 */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* 다크모드에 맞는 링크 색 */
+body.dark-mode a {
+  color: #90caf9;
+}
+
+/* 필요하면 다른 요소들도 dark-mode 안에 정의 */
