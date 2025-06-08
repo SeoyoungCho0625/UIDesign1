@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAEYAJEE</title>
+  <style>
+     <style>
+    html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+   body {
+   font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 40px;
+  background-image: url('background.jpg'); /* ← 여기만 바꿔주면 돼요 */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 40px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #4a54e1;
+      margin-bottom: 4px;
+    }
+
+    p.subtitle {
+      margin-top: 0;
+      color: #8888c2;
+      font-style: italic;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0 10px;
+      flex-wrap: wrap;
+    }
+
+     .tab {
+  background-color: #adb2f7;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px 10px 0 0;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid #6c75d4;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #6c75d4;
+      text-align: center;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #c7cbf7;
+      color: #333;
+    }
+  </style>
+</head>
+<body onload="loadResult()">
+  <div class="container">
+    <h1>HAEYAJEE</h1>
+    <p class="subtitle">Your prioritized list</p>
+
+    <div class="tabs" id="tabs"></div>
+
+    <input type="text" id="save-name" placeholder="이름을 입력하세요" />
+    <button onclick="saveCurrentList()" style="
+    margin-top: 10px;
+  background-color: #ffe8cc;
+  color: #cc6600;
+  font-weight: medium;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;    ">Save</button>
+
+
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Due Date</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="result-body"></tbody>
+    </table>
+
+    <button onclick="rerunSort()" style="
+  margin-top: 10px;
+  background-color: #ffe8cc;
+  color: #cc6600;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 26px;
+  cursor: pointer;
+">⟳ </button>
+
+  </div>
+
+  <script>
+  let currentTasks = [];
+
+  function loadResult() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("saved")) {
+      const data = JSON.parse(decodeURIComponent(params.get("saved")));
+      currentTasks = data;
+      renderTasks(data);
+      loadSavedTabs();
+      return;
+    }
+
+    const tasks = [];
+    let i = 1;
+    while (params.get(`subject${i}`)) {
+      tasks.push({
+        subject: params.get(`subject${i}`),
+        duedate: params.get(`duedate${i}`),
+        amount: parseInt(params.get(`amount${i}`))
+      });
+      i++;
+    }
+
+    tasks.sort((a, b) => {
+      if (b.amount !== a.amount) return b.amount - a.amount;
+      return new Date(a.duedate) - new Date(b.duedate);
+    });
+
+    currentTasks = tasks;
+    renderTasks(tasks);
+    loadSavedTabs();
+  }
+
+  function renderTasks(tasks) {
+    const tbody = document.getElementById('result-body');
+    tbody.innerHTML = "";
+    tasks.forEach(task => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${task.subject}</td>
+        <td>${task.duedate}</td>
+        <td>${'⭐'.repeat(task.amount)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function saveCurrentList() {
+    const name = document.getElementById("save-name").value.trim();
+    if (!name) {
+      alert("저장 이름을 입력하세요!");
+      return;
+    }
+
+    let savedLists = JSON.parse(localStorage.getItem("savedLists") || "[]");
+    savedLists.push({ name: name, data: currentTasks });
+    localStorage.setItem("savedLists", JSON.stringify(savedLists));
+    alert("저장되었습니다!");
+  }
+
+  function loadSavedTabs() {
+  const tabsDiv = document.getElementById('tabs');
+  tabsDiv.innerHTML = "";
+  let savedLists = JSON.parse(localStorage.getItem("savedLists") || "[]");
+
+  savedLists.forEach((list, index) => {
+    const tabWrapper = document.createElement("div");
+    tabWrapper.style.display = "flex";
+    tabWrapper.style.alignItems = "center";
+    tabWrapper.style.gap = "5px";
+
+    const tab = document.createElement("div");
+    tab.className = "tab";
+    tab.textContent = list.name;
+    tab.onclick = () => renderTasks(list.data);
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "✕";
+    delBtn.style.background = "none";
+    delBtn.style.border = "none";
+    delBtn.style.cursor = "pointer";
+    delBtn.style.fontWeight = "bold";
+    delBtn.style.color = "#a33";
+    delBtn.style.fontSize = "14px";
+    delBtn.title = "삭제";
+
+    delBtn.onclick = (e) => {
+      e.stopPropagation(); // 탭 클릭 방지
+      if (confirm(`'${list.name}' 탭을 삭제하시겠습니까?`)) {
+        savedLists.splice(index, 1);
+        localStorage.setItem("savedLists", JSON.stringify(savedLists));
+        loadSavedTabs(); // 다시 렌더링
+      }
+    };
+
+    tabWrapper.appendChild(tab);
+    tabWrapper.appendChild(delBtn);
+    tabsDiv.appendChild(tabWrapper);
+  });
+}
+
+function rerunSort() {
+  if (!currentTasks || currentTasks.length === 0) {
+    alert("우선순위 데이터가 없습니다!");
+    return;
+  }
+
+  const rerunSorted = [...currentTasks].sort((a, b) => {
+    if (new Date(a.duedate) !== new Date(b.duedate)) {
+      return new Date(a.duedate) - new Date(b.duedate);
+    }
+    return b.amount - a.amount;
+  });
+
+  renderTasks(rerunSorted);
+}
+
+</script>
+</body>
+</html>

@@ -1,11 +1,30 @@
+#container {
+  width: 800px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 30px;
+  border: 2px solid #4a402f;
+  border-radius: 16px;
+  background-color: #fffff5;
+  box-shadow: 0 0 20px #4a402f;
+
+   display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 img {
     width: 300px;
     height: auto;
 }
 
 body {
-    text-align: left;
-    padding-left: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* 필요시 center로 */
+    min-height: 100vh;
     padding-top: 30px;
     background: lightyellow;
     color: darkslateblue;
@@ -69,6 +88,10 @@ body.dark-mode {
 /* 다크모드에 맞는 링크 색 */
 body.dark-mode a {
   color: #90caf9;
+}
+body.dark-mode #container {
+  background-color: #2a313d; /* 진한 남색 */
+  border-color: #ccccff;    
 }
 
 
