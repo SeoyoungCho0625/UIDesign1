@@ -289,8 +289,58 @@
   function loadSavedTabs() {
   const tabsDiv = document.getElementById('tabs');
   tabsDiv.innerHTML = "";
+
+  const params = new URLSearchParams(window.location.search);
+  const savedData = params.get("saved");
+
   let savedLists = JSON.parse(localStorage.getItem("savedLists") || "[]");
 
+  if (savedData) {
+    const currentData = JSON.parse(decodeURIComponent(savedData));
+
+    // 해당 데이터와 일치하는 이름 찾아서 하나만 표시
+    const matched = savedLists.find(list =>
+      JSON.stringify(list.data) === JSON.stringify(currentData)
+    );
+
+    if (matched) {
+      const tabWrapper = document.createElement("div");
+      tabWrapper.style.display = "flex";
+      tabWrapper.style.alignItems = "center";
+      tabWrapper.style.gap = "5px";
+
+      const tab = document.createElement("div");
+      tab.className = "tab";
+      tab.textContent = matched.name;
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "✕";
+      delBtn.style.background = "none";
+      delBtn.style.border = "none";
+      delBtn.style.cursor = "pointer";
+      delBtn.style.fontWeight = "bold";
+      delBtn.style.color = "#a33";
+      delBtn.style.fontSize = "14px";
+      delBtn.title = "삭제";
+
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`'${matched.name}' 탭을 삭제하시겠습니까?`)) {
+          savedLists = savedLists.filter(list => list.name !== matched.name);
+          localStorage.setItem("savedLists", JSON.stringify(savedLists));
+          location.href = "p2.html";
+        }
+      };
+
+      tabWrapper.appendChild(tab);
+      tabWrapper.appendChild(delBtn);
+      tabsDiv.appendChild(tabWrapper);
+    }
+
+    return; // ❗ saved일 때는 여기서 끝냄
+  }
+
+  // 일반적으로 모든 탭 보여주는 경우
   savedLists.forEach((list, index) => {
     const tabWrapper = document.createElement("div");
     tabWrapper.style.display = "flex";
@@ -313,11 +363,11 @@
     delBtn.title = "삭제";
 
     delBtn.onclick = (e) => {
-      e.stopPropagation(); // 탭 클릭 방지
+      e.stopPropagation();
       if (confirm(`'${list.name}' 탭을 삭제하시겠습니까?`)) {
         savedLists.splice(index, 1);
         localStorage.setItem("savedLists", JSON.stringify(savedLists));
-        loadSavedTabs(); // 다시 렌더링
+        loadSavedTabs();
       }
     };
 
