@@ -118,25 +118,44 @@
     th {
       background-color: #c7cbf7;
       color: #414245;
+      font-weight: regular;
     }
 
-    .action-button {
+
+ .sort-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+  .sort-option {
+      margin-bottom: 20px;
+      padding: 6px 10px;
+      border: none;
+      font-size: 14px;
+      font-family: 'Galmuri11';
+      height: 40px;
+    }
+
+    .save-wrapper {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 10px;
-  background-color: #ffe8cc;
-  color: #cc6600;
-  font-family: 'Galmuri11';
-  font-weight: regular;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  height: 40px;           /* ✅ 명시적 높이 지정 */
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
+
+
+  .save-button {
+      background-color: #ffe8cc;
+      color: #cc6600;
+      font-family: 'Galmuri11';
+      font-weight: normal;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
 
   </style>
 
@@ -164,30 +183,18 @@
       <tbody id="result-body"></tbody>
     </table>
 
-    <button onclick="rerunSort()" class="action-button" style="
-  margin-top: 10px;
-  background-color: #ffe8cc;
-  color: #cc6600;
-  font-family: 'Galmuri11';
-  font-weight: regular;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-">⟳ </button>
+      <label for="sortMode">Sort by:</label>
+    <select id="sortMode" class="sort-option" onchange="rerunSort()">
+      <option value="amount">1. Amount → Due Date</option>
+      <option value="duedate">2. Due Date → Amount</option>
+      <option value="conditional">3. Conditional Priority</option>
+    </select>
 
- <button onclick="saveCurrentList()" class="action-button" style="
-    margin-top: 10px;
-  background-color: #ffe8cc;
-  color: #cc6600;
-  font-family: 'Galmuri11';
-  font-weight: regular;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;    ">Save</button>
+   
+
+<div class="save-wrapper">
+  <button onclick="saveCurrentList()" class="save-button">Save</button>
+</div>
 
 
   </div>
@@ -195,36 +202,62 @@
   <script>
   let currentTasks = [];
 
-  function loadResult() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has("saved")) {
-      const data = JSON.parse(decodeURIComponent(params.get("saved")));
-      currentTasks = data;
-      renderTasks(data);
-      loadSavedTabs();
-      return;
-    }
-
-    const tasks = [];
-    let i = 1;
-    while (params.get(`subject${i}`)) {
-      tasks.push({
-        subject: params.get(`subject${i}`),
-        duedate: params.get(`duedate${i}`),
-        amount: parseInt(params.get(`amount${i}`))
-      });
-      i++;
-    }
-
-    tasks.sort((a, b) => {
-      if (b.amount !== a.amount) return b.amount - a.amount;
-      return new Date(a.duedate) - new Date(b.duedate);
-    });
-
-    currentTasks = tasks;
-    renderTasks(tasks);
+ function loadResult() {
+  const params = new URLSearchParams(window.location.search);
+  
+  // ✅ 저장된 데이터로 들어온 경우
+  if (params.has("saved")) {
+    const data = JSON.parse(decodeURIComponent(params.get("saved")));
+    currentTasks = data;
+    renderTasks(data);  // ← 이 줄이 반드시 필요함!
     loadSavedTabs();
+    return;
   }
+
+  // 일반 GET 방식으로 들어온 경우
+  const tasks = [];
+  let i = 1;
+  while (params.get(`subject${i}`)) {
+    tasks.push({
+      subject: params.get(`subject${i}`),
+      duedate: params.get(`duedate${i}`),
+      amount: parseInt(params.get(`amount${i}`))
+    });
+    i++;
+  }
+
+  currentTasks = tasks;
+  rerunSort();        // 이건 정렬해서 보여주는 기본 로직
+  loadSavedTabs();
+}
+
+
+    function rerunSort() {
+      const mode = document.getElementById('sortMode').value;
+      const tasks = [...currentTasks];
+
+      if (mode === 'amount') {
+        tasks.sort((a, b) => {
+          if (b.amount !== a.amount) return b.amount - a.amount;
+          return new Date(a.duedate) - new Date(b.duedate);
+        });
+      } else if (mode === 'duedate') {
+        tasks.sort((a, b) => {
+          if (new Date(a.duedate) !== new Date(b.duedate)) {
+            return new Date(a.duedate) - new Date(b.duedate);
+          }
+          return b.amount - a.amount;
+        });
+      } else if (mode === 'conditional') {
+        tasks.sort((a, b) => {
+          const aPriority = a.amount >= 3 ? -a.amount : new Date(a.duedate).getTime();
+          const bPriority = b.amount >= 3 ? -b.amount : new Date(b.duedate).getTime();
+          return aPriority - bPriority;
+        });
+      }
+
+      renderTasks(tasks);
+    }
 
   function renderTasks(tasks) {
     const tbody = document.getElementById('result-body');
@@ -294,21 +327,7 @@
   });
 }
 
-function rerunSort() {
-  if (!currentTasks || currentTasks.length === 0) {
-    alert("우선순위 데이터가 없습니다!");
-    return;
-  }
 
-  const rerunSorted = [...currentTasks].sort((a, b) => {
-    if (new Date(a.duedate) !== new Date(b.duedate)) {
-      return new Date(a.duedate) - new Date(b.duedate);
-    }
-    return b.amount - a.amount;
-  });
-
-  renderTasks(rerunSorted);
-}
 
 </script>
 </body>
